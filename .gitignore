@@ -1,0 +1,6 @@
+
+/src/main/resources/settings.properties
+/.gradle/
+/.idea/
+/build/
+/gradle/
