@@ -5,9 +5,16 @@ import java.util.*
 class Settings {
     private val props = Properties()
     private var settings: DataSettings?
+
     init {
         props.load(this.javaClass.classLoader.getResourceAsStream("settings.properties"))
-        settings = DataSettings(props.getProperty("nick"), props.getProperty("password"), props.getProperty("channel"), props.getProperty("delayMin").toInt(), props.getProperty("delayMax").toInt())
+        settings = DataSettings(
+            props.getProperty("nick"),
+            props.getProperty("password"),
+            props.getProperty("channel"),
+            props.getProperty("delayMin").toInt(),
+            props.getProperty("delayMax").toInt()
+        )
     }
 
     val channel: String?
@@ -35,4 +42,10 @@ class Settings {
         }
 }
 
-data class DataSettings(val MY_NICK: String, val MY_PASS: String, val CHANNEL: String, val DELAY_MIN: Int, val DELAY_MAX: Int)
+data class DataSettings(
+    val MY_NICK: String,
+    val MY_PASS: String,
+    val CHANNEL: String,
+    val DELAY_MIN: Int,
+    val DELAY_MAX: Int
+)

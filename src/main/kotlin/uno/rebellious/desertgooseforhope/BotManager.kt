@@ -9,6 +9,7 @@ import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import uno.rebellious.desertgooseforhope.model.Channel
 
 import uno.rebellious.desertgooseforhope.model.Settings
 import java.security.SecureRandom
@@ -23,7 +24,7 @@ object BotManager {
     private var twirkThread: Thread? = null
     private val logger = Logger.getLogger("desertGooseForHope")
     private val items = arrayListOf("Dartboard", "Rake", "Bell").map { "/me Steals your $it" }
-    private val magicTerms = arrayListOf( "/me Creates a food token", "/me Turns into a 3/3 elk")
+    private val magicTerms = arrayListOf("/me Creates a food token", "/me Turns into a 3/3 elk")
     private val honks = arrayListOf("Honk", "HONK!", "Honk?!", "honk", "honk?", "!?knoH")
     private val shouts = items + magicTerms + honks
 
@@ -32,7 +33,8 @@ object BotManager {
             logger.log(Level.INFO, "Min Delay: ${SETTINGS.delayMin}")
             logger.log(Level.INFO, "Max Delay: ${SETTINGS.delayMax}")
             while (true) {
-                val delay = (SecureRandom.getInstanceStrong().nextInt(SETTINGS.delayMax - SETTINGS.delayMin) + SETTINGS.delayMin) * 60 * 1000L
+                val delay =
+                    (SecureRandom.getInstanceStrong().nextInt(SETTINGS.delayMax - SETTINGS.delayMin) + SETTINGS.delayMin) * 60 * 1000L
                 logger.log(Level.INFO, "Next Delay $delay")
                 delay(delay)
                 twirk.channelMessage(shouts.random())

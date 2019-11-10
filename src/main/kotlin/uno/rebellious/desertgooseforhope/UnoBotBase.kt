@@ -2,7 +2,6 @@ package uno.rebellious.desertgooseforhope
 
 import com.gikk.twirk.Twirk
 import com.gikk.twirk.events.TwirkListener
-import uno.rebellious.desertgooseforhope.model.Settings
 import java.io.IOException
 import java.util.logging.Logger
 
