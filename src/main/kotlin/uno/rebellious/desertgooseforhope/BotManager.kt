@@ -23,7 +23,7 @@ object BotManager {
     private val SETTINGS = Settings()
     private var twirkThread: Thread? = null
     private val logger = Logger.getLogger("desertGooseForHope")
-    private val items = arrayListOf("Random Dance Party Button", "Controller", "Bell", "Porridge/Oatmeal", "Ham").map { "/me Steals your $it" }
+    private val items = arrayListOf("Shift Banner", "Random Dance Party Button", "Controller", "Bell", "Porridge/Oatmeal", "Ham").map { "/me Steals your $it" }
     private val magicTerms = arrayListOf("/me Creates a food token", "/me Turns into a 3/3 elk")
     private val honks = arrayListOf("Butt soft through yonder window HONK", "Honk", "HONK!", "Honk?!", "honk", "honk?", "!?knoH")
     private val shouts = items + magicTerms + honks
