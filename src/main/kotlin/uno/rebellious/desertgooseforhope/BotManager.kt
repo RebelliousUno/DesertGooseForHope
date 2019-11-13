@@ -23,21 +23,25 @@ object BotManager {
     private val SETTINGS = Settings()
     private var twirkThread: Thread? = null
     private val logger = Logger.getLogger("desertGooseForHope")
-    private val items = arrayListOf("Shift Banner", "Random Dance Party Button", "Controller", "Bell", "Porridge/Oatmeal", "Ham").map { "/me Steals your $it" }
+    private val items = arrayListOf("KitKats", "Shift Banner", "Random Dance Party Button", "Controller", "Bell", "Porridge/Oatmeal", "Ham").map { "/me Steals your $it" }
     private val magicTerms = arrayListOf("/me Creates a food token", "/me Turns into a 3/3 elk")
     private val honks = arrayListOf("Butt soft through yonder window HONK", "Honk", "HONK!", "Honk?!", "honk", "honk?", "!?knoH")
-    private val shouts = items + magicTerms + honks
+    private var shouts = ArrayList<String>()
 
     private fun startHonkTimerForChannel(twirk: Twirk) {
         GlobalScope.launch {
             logger.log(Level.INFO, "Min Delay: ${SETTINGS.delayMin}")
             logger.log(Level.INFO, "Max Delay: ${SETTINGS.delayMax}")
             while (true) {
+                if (shouts.isEmpty())
+                    shouts = ArrayList(items + magicTerms + honks)
                 val delay =
                     (SecureRandom.getInstanceStrong().nextInt(SETTINGS.delayMax - SETTINGS.delayMin) + SETTINGS.delayMin) * 60 * 1000L
                 logger.log(Level.INFO, "Next Delay $delay")
                 delay(delay)
-                twirk.channelMessage(shouts.random())
+                val shout = shouts.random()
+                shouts.remove(shout)
+                twirk.channelMessage(shout)
             }
         }
     }
