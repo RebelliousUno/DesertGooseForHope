@@ -3,7 +3,6 @@ package uno.rebellious.desertgooseforhope
 import com.gikk.twirk.Twirk
 import com.gikk.twirk.TwirkBuilder
 import com.gikk.twirk.events.TwirkListener
-import io.reactivex.Observable
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.GlobalScope
@@ -19,7 +18,8 @@ import java.util.logging.Logger
 
 object BotManager {
 
-    private val scanner: Observable<String> = Scanner(System.`in`).toObservable().share()
+    private val scanner = Scanner(System.`in`).useDelimiter("\n").toObservable().share()
+
     private val SETTINGS = Settings()
     private var twirkThread: Thread? = null
     private val logger = Logger.getLogger("desertGooseForHope")
