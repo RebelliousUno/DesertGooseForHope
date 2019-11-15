@@ -28,19 +28,54 @@ object BotManager {
     private val honks = arrayListOf("Butt soft through yonder window HONK", "Honk", "HONK!", "Honk?!", "honk", "honk?", "!?knoH")
     private var shouts = ArrayList<String>()
 
-    private fun startHonkTimerForChannel(twirk: Twirk) {
+    private var omegaHonks = arrayListOf("Driver shifts?  Where we're going we don't need no driver shifts!", "Dance party until we drop", "/me Honks in Omega", "Crash that bus!", "Can we get another hour?!", "For the children", "Bussing Makes Me Feel Good")
+    private var omegaItems  = arrayListOf("Ice Cream Chords", "Bus Down", "Mystery Box", "Confetti Cannon", "Omega Shift Sign", "Tyres").map { "/me Steals your $it" }
+
+    private var omegaShouts = ArrayList<String>()
+
+    private fun startHonkTimerForChannel(twirk: Twirk, listener: UnoBotBase) {
+        var delay: Long = 0L
+        var omegaChanged: Boolean
+        listener.omegaMode
+            .distinctUntilChanged()
+            .startWith(false)
+            .subscribe() {
+                omegaChanged = true
+            }
+
         GlobalScope.launch {
             logger.log(Level.INFO, "Min Delay: ${SETTINGS.delayMin}")
             logger.log(Level.INFO, "Max Delay: ${SETTINGS.delayMax}")
             while (true) {
-                if (shouts.isEmpty())
+                omegaChanged = false
+
+                val omegaMode = listener.omegaMode.value ?: false
+                if (shouts.isEmpty() && !omegaMode) {
                     shouts = ArrayList(items + magicTerms + honks)
-                val delay =
+                }
+                if (omegaShouts.isEmpty() && omegaMode) {
+                    omegaShouts = ArrayList(omegaHonks + omegaItems)
+                }
+                delay = if (!omegaMode) {
                     (SecureRandom.getInstanceStrong().nextInt(SETTINGS.delayMax - SETTINGS.delayMin) + SETTINGS.delayMin) * 60 * 1000L
+                } else {
+                    20L * 1000 * 60 // Every 20 minutes
+                }
                 logger.log(Level.INFO, "Next Delay $delay")
-                delay(delay)
-                val shout = shouts.random()
+
+                while (delay>=0 && !omegaChanged) { //Check that Omega hasn't been activated or deactivated
+                    delay(1000*60) // Delay for a minute
+                    delay -= 1000*60 // remove a minute
+                    logger.log(Level.INFO, "Remaing delay $delay")
+                }
+
+                val shout = if (!omegaMode) {
+                    shouts.random()
+                } else {
+                    omegaShouts.random()
+                }
                 shouts.remove(shout)
+                omegaShouts.remove(shout)
                 twirk.channelMessage(shout)
             }
         }
@@ -58,8 +93,9 @@ object BotManager {
                 .setVerboseMode(true)
                 .build()
             twirk.connect()
-            twirk.addIrcListener(getOnDisconnectListener(twirk))
-            startHonkTimerForChannel(twirk)
+            val listener = getListener(twirk)
+            twirk.addIrcListener(listener)
+            startHonkTimerForChannel(twirk, listener as UnoBotBase)
 
             scanner
                 .takeUntil { it == ".quit" }
@@ -80,7 +116,9 @@ object BotManager {
         twirkThread?.interrupt()
     }
 
-    private fun getOnDisconnectListener(twirk: Twirk): TwirkListener? {
-        return UnoBotBase(twirk)
+    private fun getListener(twirk: Twirk): TwirkListener? {
+        val listener = UnoBotBase(twirk)
+        listener.omegaMode.onNext(false)
+        return listener
     }
 }
